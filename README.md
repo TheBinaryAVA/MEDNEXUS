@@ -59,7 +59,8 @@ Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/c
 
 <img width="953" height="451" alt="image" src="https://github.com/user-attachments/assets/e12f179c-0c12-463b-8fbc-6048bbef47f6" />
 
-Hospital administrators often rely on weekly or monthly reports, which makes it difficult to detect operational issues early. Important metrics like bed occupancy, OPD wait times, billing collection rates, lab turnaround time (TAT), and patient satisfaction scores are usually stored in different systems without a unified view.
+Hospital administrators often rely on weekly or monthly reports, which makes it difficult to detect operational issues early.
+Important metrics like bed occupancy, OPD wait times, billing collection rates, lab turnaround time (TAT), and patient satisfaction scores are usually stored in different systems without a unified view.
 
 This project introduces an AI-powered hospital analytics platform that aggregates data from multiple systems, detects anomalies in real time, and generates natural language insights with actionable recommendations for hospital leadership.
 
