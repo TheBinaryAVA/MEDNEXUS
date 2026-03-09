@@ -1,207 +1,228 @@
-## Project info
-If you want to work locally using your own IDE, you can clone this repo and push changes.
+# Backend Starter — Node.js + Express + TypeScript
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Production-ready REST API starter covering prompts #20–#34.
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Quick Start
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```bash
+# 1. Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
+# 2. Copy and fill env
+cp .env.example .env
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# 3. Generate Prisma client + run migrations
+npm run db:generate
+npm run db:migrate        # creates tables
+
+# 4. Seed the database
+npm run db:seed
+
+# 5. Start dev server (hot reload)
+npm run dev               # → http://localhost:3000
+
+# 6. View API docs (separate terminal)
+npm run docs:serve        # → http://localhost:4000/docs
 ```
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-
-## Can I connect a custom domain to my  project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
-
-
-🏥 AI-Powered Hospital Performance Intelligence System
-📌 Overview
-
-
-<img width="953" height="451" alt="image" src="https://github.com/user-attachments/assets/e12f179c-0c12-463b-8fbc-6048bbef47f6" />
-
-Hospital administrators often rely on weekly or monthly reports, which makes it difficult to detect operational issues early.
-Important metrics like bed occupancy, OPD wait times, billing collection rates, lab turnaround time (TAT), and patient satisfaction scores are usually stored in different systems without a unified view.
-
-This project introduces an AI-powered hospital analytics platform that aggregates data from multiple systems, detects anomalies in real time, and generates natural language insights with actionable recommendations for hospital leadership.
-
-🎯 Problem Statement
-
-Hospital leadership lacks a real-time intelligent analytics system that can:
-
-Automatically analyze operational metrics
-
-Detect performance issues early
-
-Explain root causes
-
-Recommend corrective actions
-
-Most existing dashboards only display numbers without providing context or decision support.
-
-💡 Proposed Solution
-
-Our system acts as an AI-driven hospital operations assistant that:
-
-Aggregates data from multiple hospital systems.
-
-Calculates key hospital performance KPIs automatically.
-
-Detects anomalies when metrics deviate from normal patterns.
-
-Generates natural language insights explaining the issue.
-
-Suggests prioritized corrective actions.
-
-⚙️ Core Features
-📊 Multi-Source Data Aggregation
-
-Collects and normalizes data from:
-
-Bed management systems
-
-OPD scheduling
-
-Billing systems
-
-Lab TAT monitoring
-
-Pharmacy systems
-
-Patient satisfaction surveys
-
-📈 Automated KPI Calculation
-
-The system automatically calculates key hospital metrics:
-
-Bed Occupancy Rate
-
-Average OPD Wait Time
-
-Billing Collection Rate
-
-Lab Turnaround Time Compliance
-
-30-Day Readmission Rate
-
-Net Promoter Score (NPS)
-
-🚨 Anomaly Detection
-
-The system flags performance issues when:
-
-KPI deviates more than 15% from the 7-day baseline
-
-A predefined threshold is exceeded.
-<img width="719" height="170" alt="image" src="https://github.com/user-attachments/assets/824b4a5c-b288-4af2-a427-990d8441c6de" />
-
-
-🧠 AI-Generated Insights
-
-Instead of just displaying numbers, the AI explains the issue:
-
-Example:
-
-"OPD wait time in Cardiology increased by 38% compared to last week, likely due to two unassigned doctor slots."
-
-<img width="235" height="252" alt="image" src="https://github.com/user-attachments/assets/e90108c2-aaa5-4606-ab1b-f3bb94773ac8" />
-
-✅ Actionable Recommendations
-
-The system suggests actions such as:
-
-Reassigning doctor schedules
-
-Activating overflow OPD protocols
-
-Adjusting staffing levels
-
-Optimizing resource allocation
-
-🧩 System Architecture
-Hospital Systems
-   │
-   ├── Bed Management
-   ├── OPD Scheduling
-   ├── Billing
-   ├── Lab TAT
-   ├── Pharmacy
-   └── Patient Satisfaction
-        │
-        ▼
-Data Aggregation & Normalization
-        │
-        ▼
-KPI Calculation Engine
-        │
-        ▼
-Anomaly Detection Module
-        │
-        ▼
-RAG (LlamaIndex) + LLM Insights
-        │
-        ▼
-Dashboard & Decision Support
-🛠️ Tech Stack
-Component	Technology
-Programming Language	Python
-AI Framework	LlamaIndex
-RAG Architecture	Retrieval Augmented Generation
-Data Processing	Pandas / NumPy
-Anomaly Detection	Statistical / ML Models
-UI Dashboard	Streamlit
-LLM Integration	OpenAI API
-
-
-🖥️ Dashboard Features
-
-Real-time hospital KPI monitoring
-
-Automatic anomaly alerts
-
-
-Natural language explanations
-
-Recommended corrective actions
-
-
-<img width="736" height="360" alt="image" src="https://github.com/user-attachments/assets/392ae483-5a56-492e-b147-21f7a4b37602" />
+---
+
+## File Tree
+
+```
+backend-starter/
+├── prisma/
+│   ├── schema.prisma         # DB schema + migrations source
+│   └── seed.ts               # Dev seed data
+├── src/
+│   ├── config/
+│   │   ├── index.ts          # Env config with validation
+│   │   ├── database.ts       # Prisma singleton + connect/disconnect
+│   │   └── logger.ts         # Pino structured logger
+│   ├── controllers/
+│   │   ├── auth.controller.ts
+│   │   └── post.controller.ts
+│   ├── middleware/
+│   │   ├── auth.middleware.ts      # JWT authenticate + authorize(role)
+│   │   ├── error.middleware.ts     # Global error handler + 404
+│   │   ├── logging.middleware.ts   # Request ID + pino-http
+│   │   ├── validate.middleware.ts  # express-validator wrapper
+│   │   └── validators.ts           # Per-route validation chains
+│   ├── repositories/
+│   │   ├── user.repository.ts     # DB queries for users
+│   │   └── post.repository.ts     # DB queries for posts (pagination, filters)
+│   ├── routes/
+│   │   ├── auth.routes.ts
+│   │   └── post.routes.ts
+│   ├── services/
+│   │   ├── auth.service.ts        # Hash, JWT, register, login, refresh
+│   │   ├── post.service.ts        # Business logic + authz
+│   │   └── upload.service.ts      # S3 presigned URL flow
+│   ├── jobs/
+│   │   └── email.job.ts           # BullMQ queue + worker
+│   ├── types/
+│   │   ├── index.ts               # DTOs, interfaces
+│   │   └── errors.ts              # AppError hierarchy
+│   ├── app.ts                     # Express app factory
+│   └── index.ts                   # Bootstrap + graceful shutdown
+├── tests/
+│   ├── setup.ts                   # Global test setup + DB teardown
+│   ├── unit/
+│   │   └── auth.service.test.ts
+│   └── integration/
+│       └── posts.routes.test.ts
+├── docs/
+│   └── openapi.yaml               # Full OpenAPI 3.1 spec
+├── scripts/
+│   └── serve-docs.ts              # Swagger UI dev server
+├── .env.example
+├── .eslintrc.js
+├── .prettierrc
+├── jest.config.ts
+├── tsconfig.json
+└── package.json
+```
+
+---
+
+## Key Commands
+
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Hot-reload dev server |
+| `npm run build` | Compile TypeScript |
+| `npm run lint` | ESLint check |
+| `npm run format` | Prettier write |
+| `npm test` | All tests |
+| `npm run test:unit` | Unit tests only |
+| `npm run test:integration` | Integration tests (needs test DB) |
+| `npm run test:coverage` | Coverage report |
+| `npm run db:migrate` | Run Prisma migrations |
+| `npm run db:generate` | Regenerate Prisma client |
+| `npm run db:studio` | Open Prisma Studio |
+| `npm run db:seed` | Seed dev data |
+| `npm run docs:serve` | Swagger UI on :4000 |
+
+---
+
+## Auth Flow
+
+```
+Register/Login → { accessToken (15m), refreshToken (cookie, 7d) }
+         ↓
+Authenticated request: Authorization: Bearer <accessToken>
+         ↓
+Token expiry → POST /auth/refresh (uses cookie) → new accessToken + rotated cookie
+         ↓
+Logout → revokes all refresh tokens for user
+```
+
+**Secure cookie settings:**
+- `httpOnly: true` — not accessible by JS
+- `secure: true` in production — HTTPS only
+- `sameSite: strict` in production — CSRF protection
+- `path: /api/v1/auth/refresh` — scoped to refresh endpoint only
+
+---
+
+## CRUD Contract
+
+### Post endpoints
+
+| Method | Path | Auth | Notes |
+|---|---|---|---|
+| GET | `/api/v1/posts` | — | Paginated, filterable, sortable |
+| GET | `/api/v1/posts/:id` | — | Includes author |
+| POST | `/api/v1/posts` | ✓ | Returns 201 |
+| PATCH | `/api/v1/posts/:id` | ✓ | Requires `version` field (optimistic lock) |
+| DELETE | `/api/v1/posts/:id` | ✓ | Soft delete; `?hard=true` for admins |
+
+### Pagination response shape
+```json
+{
+  "success": true,
+  "data": [...],
+  "meta": { "total": 42, "page": 1, "limit": 20, "totalPages": 3, "hasNext": true, "hasPrev": false }
+}
+```
+
+---
+
+## Security
+
+| Feature | Implementation |
+|---|---|
+| Security headers | `helmet()` — sets X-Frame-Options, CSP, HSTS, etc. |
+| CORS | Allowlist from `CORS_ORIGINS` env, `credentials: true` |
+| Global rate limit | 100 req / 15 min per IP |
+| Auth rate limit | 10 req / 15 min on `/auth/register` and `/auth/login` |
+| Password hashing | bcrypt with configurable rounds (default 12) |
+| JWT | Short-lived access (15m) + rotating refresh (7d) |
+| Optimistic concurrency | `version` field on updates prevents lost-update anomaly |
+| Soft delete | `deletedAt` timestamp — records stay for audit |
+
+---
+
+## Error Response Shape
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed",
+    "details": [{ "field": "email", "msg": "Valid email required" }]
+  }
+}
+```
+
+Error codes: `VALIDATION_ERROR | UNAUTHORIZED | FORBIDDEN | NOT_FOUND | CONFLICT | RATE_LIMITED | BAD_REQUEST | INTERNAL_ERROR`
+
+---
+
+## Log Format
+
+```json
+{
+  "level": "info",
+  "time": "12:34:56.789",
+  "env": "development",
+  "req": { "id": "abc-123", "method": "GET", "url": "/api/v1/posts", "userId": "u-1" },
+  "res": { "statusCode": 200, "responseTime": 42 },
+  "msg": "GET /api/v1/posts 200"
+}
+```
+
+---
+
+## Background Jobs (optional)
+
+Requires Redis. Install BullMQ:
+```bash
+npm install bullmq ioredis
+```
+
+Start worker alongside server:
+```ts
+import { startEmailWorker } from './jobs/email.job';
+startEmailWorker();
+```
+
+---
+
+## File Uploads (optional)
+
+Requires AWS SDK:
+```bash
+npm install @aws-sdk/client-s3 @aws-sdk/s3-request-presigner
+```
+
+Signed upload flow:
+```
+Client: POST /api/v1/uploads/presign  { mimeType: "image/png" }
+Server: → { uploadUrl, fileKey, expiresIn }
+Client: PUT <uploadUrl> (direct to S3, no server bandwidth)
+Client: saves fileKey in your resource payload
+```
