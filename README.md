@@ -56,6 +56,9 @@ Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/c
 🏥 AI-Powered Hospital Performance Intelligence System
 📌 Overview
 
+
+<img width="953" height="451" alt="image" src="https://github.com/user-attachments/assets/e12f179c-0c12-463b-8fbc-6048bbef47f6" />
+
 Hospital administrators often rely on weekly or monthly reports, which makes it difficult to detect operational issues early. Important metrics like bed occupancy, OPD wait times, billing collection rates, lab turnaround time (TAT), and patient satisfaction scores are usually stored in different systems without a unified view.
 
 This project introduces an AI-powered hospital analytics platform that aggregates data from multiple systems, detects anomalies in real time, and generates natural language insights with actionable recommendations for hospital leadership.
@@ -128,6 +131,8 @@ The system flags performance issues when:
 KPI deviates more than 15% from the 7-day baseline
 
 A predefined threshold is exceeded.
+<img width="719" height="170" alt="image" src="https://github.com/user-attachments/assets/824b4a5c-b288-4af2-a427-990d8441c6de" />
+
 
 🧠 AI-Generated Insights
 
@@ -184,12 +189,18 @@ Data Processing	Pandas / NumPy
 Anomaly Detection	Statistical / ML Models
 UI Dashboard	Streamlit
 LLM Integration	OpenAI API
+
+
 🖥️ Dashboard Features
 
 Real-time hospital KPI monitoring
 
 Automatic anomaly alerts
 
+
 Natural language explanations
 
 Recommended corrective actions
+
+
+<img width="736" height="360" alt="image" src="https://github.com/user-attachments/assets/392ae483-5a56-492e-b147-21f7a4b37602" />
