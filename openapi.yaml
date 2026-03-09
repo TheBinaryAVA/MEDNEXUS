@@ -1,0 +1,305 @@
+openapi: 3.1.0
+info:
+  title: Backend Starter API
+  version: 1.0.0
+  description: |
+    Node.js + Express + TypeScript REST API.
+    Auth uses Bearer JWT (15 min expiry) + httpOnly refresh cookie (7 days, auto-rotated).
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Local development
+  - url: https://api.myapp.com/api/v1
+    description: Production
+
+tags:
+  - name: Health
+    description: Service health
+  - name: Auth
+    description: Registration, login, token refresh
+  - name: Posts
+    description: Post CRUD
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        error:
+          type: object
+          properties:
+            code: { type: string, example: VALIDATION_ERROR }
+            message: { type: string }
+            details: {}
+
+    User:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        name: { type: string }
+        role: { type: string, enum: [USER, ADMIN] }
+        isActive: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    Post:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        content: { type: string, nullable: true }
+        published: { type: boolean }
+        version: { type: integer }
+        authorId: { type: string, format: uuid }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    PaginationMeta:
+      type: object
+      properties:
+        total: { type: integer }
+        page: { type: integer }
+        limit: { type: integer }
+        totalPages: { type: integer }
+        hasNext: { type: boolean }
+        hasPrev: { type: boolean }
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              example:
+                status: ok
+                env: development
+                uptime: 123.45
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, name]
+              properties:
+                email: { type: string, format: email, example: alice@example.com }
+                password: { type: string, minLength: 8, example: MyPass123 }
+                name: { type: string, example: Alice Smith }
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                  accessToken: eyJhbGc...
+                  user: { id: uuid, email: alice@example.com, name: Alice Smith, role: USER }
+        '409': { description: Email already registered }
+        '422': { description: Validation error }
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login and receive access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        '200':
+          description: Login successful — refresh token set as httpOnly cookie
+          content:
+            application/json:
+              example:
+                success: true
+                data:
+                  accessToken: eyJhbGc...
+                  user: { id: uuid, email: alice@example.com }
+        '401': { description: Invalid credentials }
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh access token (uses refreshToken cookie)
+      responses:
+        '200':
+          description: New access token issued
+          content:
+            application/json:
+              example:
+                success: true
+                data: { accessToken: eyJhbGc... }
+        '401': { description: No or invalid refresh token }
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout — revokes refresh token
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Logged out }
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Get the currently authenticated user
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      user: { $ref: '#/components/schemas/User' }
+
+  /posts:
+    get:
+      tags: [Posts]
+      summary: List posts
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 20, maximum: 100 }
+        - in: query
+          name: search
+          schema: { type: string }
+          description: Full-text search on title and content
+        - in: query
+          name: published
+          schema: { type: boolean }
+        - in: query
+          name: authorId
+          schema: { type: string, format: uuid }
+        - in: query
+          name: sortBy
+          schema: { type: string, enum: [createdAt, updatedAt, title], default: createdAt }
+        - in: query
+          name: sortOrder
+          schema: { type: string, enum: [asc, desc], default: desc }
+      responses:
+        '200':
+          description: Paginated post list
+          content:
+            application/json:
+              example:
+                success: true
+                data: [{ id: uuid, title: Hello World, published: true }]
+                meta: { total: 42, page: 1, limit: 20, totalPages: 3, hasNext: true, hasPrev: false }
+
+    post:
+      tags: [Posts]
+      summary: Create a new post
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title: { type: string, maxLength: 255 }
+                content: { type: string }
+                published: { type: boolean, default: false }
+      responses:
+        '201':
+          description: Post created
+          content:
+            application/json:
+              example:
+                success: true
+                data: { post: { id: uuid, title: Hello World, version: 1 } }
+        '401': { description: Unauthorized }
+        '422': { description: Validation error }
+
+  /posts/{id}:
+    get:
+      tags: [Posts]
+      summary: Get a post by ID (includes author)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Post found }
+        '404': { description: Post not found }
+
+    patch:
+      tags: [Posts]
+      summary: Partially update a post (optimistic concurrency via version field)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version]
+              properties:
+                version: { type: integer, description: Current version for optimistic locking }
+                title: { type: string }
+                content: { type: string }
+                published: { type: boolean }
+      responses:
+        '200': { description: Post updated }
+        '401': { description: Unauthorized }
+        '403': { description: Forbidden — not the author }
+        '404': { description: Post not found }
+        '409': { description: Version conflict — fetch latest and retry }
+
+    delete:
+      tags: [Posts]
+      summary: Delete a post (soft by default, hard with ?hard=true for admins)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+        - in: query
+          name: hard
+          schema: { type: boolean }
+          description: Hard delete — admin only
+      responses:
+        '200': { description: Post deleted }
+        '403': { description: Forbidden }
+        '404': { description: Post not found }
