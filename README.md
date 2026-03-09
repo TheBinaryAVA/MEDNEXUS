@@ -137,6 +137,8 @@ Example:
 
 "OPD wait time in Cardiology increased by 38% compared to last week, likely due to two unassigned doctor slots."
 
+<img width="235" height="252" alt="image" src="https://github.com/user-attachments/assets/e90108c2-aaa5-4606-ab1b-f3bb94773ac8" />
+
 ✅ Actionable Recommendations
 
 The system suggests actions such as:
